@@ -30,6 +30,12 @@ class DataTableView(View):
         data_table_factory = DataTableFactory.get_factory(self.query_engine)
         data_table_factory.set_query(self.query)
 
+        factory_displayed_columns = [*request.GET.getlist('factory_columns'),
+                                     *request.GET.getlist('amp;factory_columns')]
+        if len(factory_displayed_columns) != 0:
+            # set displayed columns
+            data_table_factory.set_displayed_columns(factory_displayed_columns)
+
         if request.GET.get('ajax_factory_loader', None) is not None:
             filter_args = data_table_factory.filter_by_request_args(
                 **request.GET)
