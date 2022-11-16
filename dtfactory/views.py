@@ -26,7 +26,6 @@ class DataTableView(View):
     filters = []
 
     def get(self, request, *args, **kwargs):
-        # todo: kolon seçimi eklenecek
         data_table_factory = DataTableFactory.get_factory(self.query_engine)
         data_table_factory.set_query(self.query)
 
