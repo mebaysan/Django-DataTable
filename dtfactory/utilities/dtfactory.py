@@ -1,11 +1,11 @@
 import pandas as pd
-from .factories.aws_dtfactory import AWSDataTableFactory
 
+from helpers.datatable.table_factories.aws import AWSDataTableFactory
+
+con = "you have to set your own connection"
 
 class DataTableFactory(object):
-    """Data Table Factory class to generate a related sub data table factory class
-
-    """
+    """Data Table Factory class to generate a related sub data table factory class"""
 
     @staticmethod
     def get_factory(query_engine):
@@ -17,6 +17,6 @@ class DataTableFactory(object):
             an object that is created by using query_engine related data table factory class
         """
         if query_engine == "aws":
-            return AWSDataTableFactory(query_engine)
+            return AWSDataTableFactory(con)
         else:
             return pd.DataFrame()

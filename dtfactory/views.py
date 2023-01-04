@@ -27,27 +27,37 @@ class DataTableView(View):
 
     def get(self, request, *args, **kwargs):
         data_table_factory = DataTableFactory.get_factory(self.query_engine)
-        data_table_factory.set_query(self.query)
+        data_table_factory.set_columns(self.query)
 
-        factory_displayed_columns = [*request.GET.getlist('factory_columns'),
-                                     *request.GET.getlist('amp;factory_columns')]
+        factory_displayed_columns = [
+            *request.GET.getlist("factory_columns"),
+            *request.GET.getlist("amp;factory_columns"),
+        ]
         if len(factory_displayed_columns) != 0:
             # set displayed columns
             data_table_factory.set_displayed_columns(factory_displayed_columns)
 
-        if request.GET.get('ajax_factory_loader', None) is not None:
-            filter_args = data_table_factory.filter_by_request_args(
-                **request.GET)
-            data = filter_args['data'].to_dict(orient='records')
-            data = data[filter_args['start']                        :filter_args['start'] + filter_args['length']]
-            result = {'data': data, 'draw': filter_args['draw'], 'recordsTotal': filter_args['total'],
-                      'recordsFiltered': filter_args['count']}
+        if request.GET.get("ajax_factory_loader", None) is not None:
+            filter_args = data_table_factory.filter_by_request_args(self.query, **request.GET)
+            data = filter_args["data"].to_dict(orient="records")
+
+            result = {
+                "data": data,
+                "draw": filter_args["draw"],
+                "recordsTotal": filter_args["total"],
+                "recordsFiltered": filter_args["count"],
+            }
             return JsonResponse(result)
+
         return render(
             request,
             "datagateway/data_table.html",
-            context={"page_name": self.page_name,
-                     'filters': self.filters, 'factory': data_table_factory},
+            context={
+                "page_title": self.page_name,
+                "filters": self.filters,
+                "factory": data_table_factory,
+                "is_active": self.is_active,
+            },
         )
 
     def dispatch(self, request, *args, **kwargs):
