@@ -1,6 +1,6 @@
 import pandas as pd
 
-from helpers.datatable.table_factories.aws import AWSDataTableFactory
+from .factories.aws_dtfactory import AWSDataTableFactory
 
 con = "you have to set your own connection"
 
