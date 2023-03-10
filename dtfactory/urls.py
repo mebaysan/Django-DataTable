@@ -14,7 +14,13 @@ urlpatterns = [
             filters=[
                 {'filter_column': 'custom_region', 'display_name': 'Region', 'type': 'static',
                  'filter_values': ['All', 'TR', 'EN']}
-            ]
+            ],
+            is_active=True,
+            default_displayed_columns=[
+                "col_1",
+                "col_2",
+            ],
+            none_replacer="",
         ),
         name="dt_demo",
     ),
