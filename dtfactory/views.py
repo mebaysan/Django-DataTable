@@ -24,10 +24,19 @@ class DataTableView(View):
     query_parameters = {}
     permission = ""
     filters = []
+    is_active = False
+    default_displayed_col_number = 4
+    default_displayed_columns = None
+    none_replacer = ""
 
     def get(self, request, *args, **kwargs):
         data_table_factory = DataTableFactory.get_factory(self.query_engine)
         data_table_factory.set_columns(self.query)
+        data_table_factory.set_none_replacer(self.none_replacer)
+
+        if self.default_displayed_columns is not None:
+            # do not forget, you have to pass the exact column name in the database!!
+            data_table_factory.set_displayed_columns(self.default_displayed_columns)
 
         factory_displayed_columns = [
             *request.GET.getlist("factory_columns"),
