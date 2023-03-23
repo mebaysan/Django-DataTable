@@ -117,6 +117,30 @@ class AWSDataTableFactory(object):
         where_clause += " or ".join(conditions)
         query += where_clause
         return query
+    
+
+    def get_advanced_search_query(self, query, search_dict):
+        """
+        query (str): the query will be modified
+        search_dict (dict): keys are column names, values are search keys and conditions
+        """
+        if "where" not in query.lower():
+            where_clause = " WHERE "
+        else:
+            where_clause = " AND "
+
+        conditions = []
+
+        for col, search_key in search_dict.items():
+            col = col.split("-")[1]
+            value, condition = search_key[0].split("baysansoftidentifier")
+            value = value.strip("'")
+            conditions.append(f"{col} {condition} '{value}'")
+
+        where_clause += " AND ".join(conditions)
+        query += where_clause
+        return query
+
 
     def get_row_number_filtered_query(self, query, start, length):
         query = (
@@ -172,6 +196,17 @@ class AWSDataTableFactory(object):
         factory_filters = [
             f for f in kwargs if f.startswith("factory_filter")
         ]  # if we want to filter out the raw query, we have(!) to pass filter keywords with 'factory_filter' prefix
+
+
+        advanced_filter_parameters = {
+            key: value
+            for key, value in kwargs.items()
+            if key.startswith("advanced_filter")
+        }
+        # ?ajax_factory_loader=true&advanced_filter-my_column='filter_value'baysansoftidentifier>= (condition)
+        if advanced_filter_parameters:
+            query = self.get_advanced_search_query(query, advanced_filter_parameters)
+
 
         ############ factory_filters applying ############
         if len(factory_filters) > 0:
